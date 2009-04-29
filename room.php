@@ -47,8 +47,11 @@
 
 		if (!strlen(trim($_POST[email]))) $problems[] = "Please enter your email address";
 		if (!strlen(trim($_POST[blurb]))) $problems[] = "Please enter your part of the story";
-		if (!strlen(trim($_POST[choice1]))) $problems[] = "Please enter the first choice";
-		if (!strlen(trim($_POST[choice2]))) $problems[] = "Please enter the second choice";
+
+		if (!$_POST[end_here]){
+			if (!strlen(trim($_POST[choice1]))) $problems[] = "Please enter the first choice";
+			if (!strlen(trim($_POST[choice2]))) $problems[] = "Please enter the second choice";
+		}
 
 		if (!count($problems)){
 
@@ -118,7 +121,7 @@
 		print "<input type=\"hidden\" name=\"opt\" value=\"$opt\">";
 		print "Your email address: (it wont be shown on the site)<br><input type=\"text\" name=\"email\" size=\"50\" value=\"$email_cookie\"><br><br>";
 		print "Story description:<br><textarea name=\"blurb\" cols=\"50\" rows=\"10\"></textarea><br><br>";
-		if ($depth>9){
+		if ($depth>19){
 			print "<select name=\"end_here\"><option value=\"0\">The adventure continues...</option><option value=\"1\">The adventure ends here</option></select><br><br>";
 		}else{
 			print "<input type=\"hidden\" name=\"end_here\" value=\"0\">";
@@ -153,12 +156,12 @@
 		print nl2br(htmlentities(chop($room[blurb])));
 		print "<br><br><b>It's all over.</b> Why not <a href=\"room.php\">start again</a>.";
 	}else{
-		print nl2br(htmlentities(chop($room[blurb])))."<br />\n";
+		print defaulty(nl2br(htmlentities(trim($room[blurb]))))."<br />\n";
 		echo "<br />\n";
 		echo "<b>What will you do?</b><br />\n";
 		echo "<div class=\"choices\">\n";
-		print "[1] <a href=\"room.php?room=$room[room_1]&from=$room_id&opt=1\">".htmlentities($room[text_1])."</a><br />\n";
-		print "[2] <a href=\"room.php?room=$room[room_2]&from=$room_id&opt=2\">".htmlentities($room[text_2])."</a><br />\n";
+		print "[1] <a href=\"room.php?room=$room[room_1]&from=$room_id&opt=1\">".defaulty(htmlentities($room[text_1]))."</a><br />\n";
+		print "[2] <a href=\"room.php?room=$room[room_2]&from=$room_id&opt=2\">".defaulty(htmlentities($room[text_2]))."</a><br />\n";
 		echo "</div>\n";
 	}
 	print "<br><br><br><br>";
@@ -171,6 +174,10 @@
 		echo "</div>";
 	}
 
-	include('footer.txt');
 
+	function defaulty($x){
+		return strlen($x) ? $x : '<i>Blank</i>';
+	}
+
+	include('footer.txt');
 ?>

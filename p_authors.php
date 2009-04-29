@@ -1,14 +1,15 @@
 <?
-	include('../../../includes/network.txt');
+	include('../../../includes/db.php');
 
-	mysql_select_db('cal_games');
+	db_select_db('cal_games');
 
 	include('header.txt');
 
 	print "The following people have added pages to the story:<br><br>";
 
-	$result = mysql_query("SELECT COUNT(id) AS c,email FROM choose_rooms GROUP BY email ORDER BY c DESC",$db);
-	while($row = mysql_fetch_array($result)){
+	$ret = db_fetch("SELECT COUNT(id) AS c,email FROM choose_rooms GROUP BY email ORDER BY c DESC");
+	foreach ($ret[rows] as $row){
+		$row[email] = HtmlSpecialChars($row[email]);
 		print "$row[c] - $row[email]<br>";
 	}
 

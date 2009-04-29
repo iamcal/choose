@@ -1,14 +1,13 @@
 <?
-	include('../../../includes/network.txt');
+	include('../../../includes/db.php');
 
-	mysql_select_db('cal_games');
+	db_select_db('cal_games');
 
 	include('header.txt');
 
-	function insertRoutes($id,$data){
-		global $db;
+	function insertRoutes($id, $data){
 		$count = 0;
-		$room = mysql_fetch_array(mysql_query("SELECT * FROM choose_rooms WHERE id=$id",$db));
+		$room = db_single(db_fetch("SELECT * FROM choose_rooms WHERE id=$id"));
 		if ($room[end_here]){
 			print $data."<td bgcolor=\"#ffcccc\"><a href=\"room.php?room=$id\">$id</a></td></tr>";
 			$count++;
@@ -36,7 +35,7 @@ There are quite a few routes through the game. Here they are (read left to right
 <br>
 <br>
 <table cellpadding="4" cellspacing="1" border="0">
-<?php $count = insertRoutes(1,'<tr>'); ?>
+<?php $count = insertRoutes(1, '<tr>'); ?>
 </table>
 <br>
 There are currently <?php echo $count; ?> routes through the story.

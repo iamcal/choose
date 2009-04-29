@@ -1,3 +1,7 @@
+php_flag register_globals 0
+php_flag magic_quotes_gpc 0
+php_flag magic_quotes_runtime 0
+
 <Files edit.php>
 	AuthType basic
 	AuthName "iamcal choose app"

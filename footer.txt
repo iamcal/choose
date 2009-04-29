@@ -3,22 +3,22 @@
 </div>
 
 <div class="content" align="center">
-	&copy; 2001 <a href="http://www.iamcal.com/network" target="_blank" title="The iamcal network">iamcal network</a>
+	&copy; 2001-2009 <a href="http://www.iamcal.com/">Cal Henderson</a>
 </div>
 
 <div id="leftcol">
-	<h2>things to click on</h2>
-	<p>
+	<h2>Navigation</h2>
+	<p style="margin: 0;">
 		<br>
-		<a href="./">about this site</a><br>
-		<a href="room.php">start the game</a><br>
-		<a href="source.php">the source code</a><br>
-		<br>
-		<a href="http://www.iamcal.com/" target="_blank">iamcal</a><br>
-		<a href="http://www.iamcal.com/network/" target="_blank">iamcal nextwork</a><br>
-		<a href="http://www.pixelflo.com/" target="_blank">pixelflo</a><br>
-		<br>
-		<?php echo $insert; ?>
+		&raquo;<a href="./">about this site</a><br />
+		<br />
+		&raquo;<a href="room.php">play the game</a><br />
+		<br />
+		&raquo;<a href="source.php">source code</a><br>
+		<br />
+		<br />
+		&raquo;<a href="http://www.iamcal.com/" target="_blank">iamcal.com</a><br />
+		<?=$insert?>
 	</p>
 </div>
 

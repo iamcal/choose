@@ -1,32 +1,61 @@
 <?
-	include('../../../includes/network.txt');
+	include('../../../includes/db.php');
 
-	mysql_select_db('cal_games');
+	db_select_db('cal_games');
 
 
-	if ($HTTP_POST_VARS[done]){
-		$id = $HTTP_POST_VARS[id];
-		$blurb = $HTTP_POST_VARS[blurb];
-		$text_1 = $HTTP_POST_VARS[text_1];
-		$text_2 = $HTTP_POST_VARS[text_2];
+	#
+	# save changes?
+	#
 
-		mysql_query("UPDATE choose_rooms SET blurb='$blurb', text_1='$text_1', text_2='$text_2' WHERE id='$id'",$db);
+	if ($_POST[done]){
+
+		$id = intval($_POST[id]);
+
+		db_update('choose_rooms', array(
+			'blurb'		=> AddSlashes($_POST[blurb]),
+			'text_1'	=> AddSlashes($_POST[text_1]),
+			'text_2'	=> AddSlashes($_POST[text_2]),
+		), "id=$id");
 
 		header("location: edit.php?id=$id&done=1");
 		exit;
 	}
 
 
-	$room = $HTTP_GET_VARS[id];
+	#
+	# delete room?
+	#
 
-	$room_row = mysql_fetch_array(mysql_query("SELECT * FROM choose_rooms WHERE id='$room'",$db));
+	if ($_POST[delete]){
 
-	$parent_row = mysql_fetch_array(mysql_query("SELECT * FROM choose_rooms WHERE room_1='$room' OR room_2='$room'",$db));
+		$id = intval($_POST[id]);
+
+		$room = db_single(db_fetch("SELECT * FROM choose_rooms WHERE id=$id"));
+		$parent	= db_single(db_fetch("SELECT * FROM choose_rooms WHERE room_1=$id OR room_2=$id"));
+
+		db_write("DELETE FROM choose_rooms WHERE id=$id");
+		db_write("UPDATE choose_rooms SET room_1=0 WHERE room_1=$id");
+		db_write("UPDATE choose_rooms SET room_2=0 WHERE room_2=$id");
+
+		header("location: edit.php?id=$parent[id]");
+		exit;
+	}
 
 
-	if (!$room_row[id]){
+
+	#
+	# get info for display
+	#
+
+	$room_id = intval($_GET[id]);
+
+	$room	= db_single(db_fetch("SELECT * FROM choose_rooms WHERE id=$room_id"));
+	$parent	= db_single(db_fetch("SELECT * FROM choose_rooms WHERE room_1=$room_id OR room_2=$room_id"));
+
+	if (!$room[id]){
 		include('header.txt');
-		print "error: room $room not found";
+		print "error: room $room_id not found";
 		include('footer.txt');
 		exit;
 	}
@@ -35,10 +64,11 @@
 	include('header.txt');
 ?>
 
-<h1>Edit <a href="room.php?room=<?=$room_row[id]?>">Room <?=$room_row[id]?></a></h1>
 
-<? if ($parent_row[id]){ ?>
-	<p>Parent room: <a href="edit.php?id=<?=$parent_row[id]?>">room <?=$parent_row[id]?></a>.</p>
+<h1>Edit <a href="room.php?room=<?=$room[id]?>">Room <?=$room[id]?></a></h1>
+
+<? if ($parent[id]){ ?>
+	<p>Parent room: <a href="edit.php?id=<?=$parent[id]?>">room <?=$parent[id]?></a>.</p>
 <? } ?>
 
 <? if ($HTTP_GET_VARS[done]){ ?>
@@ -46,12 +76,12 @@
 <? } ?>
 
 <form action="edit.php" method="post">
-<input type="hidden" name="id" value="<?=$room_row[id]?>" />
+<input type="hidden" name="id" value="<?=$room[id]?>" />
 <input type="hidden" name="done" value="1" />
 
-	<p>blurb:<br /><textarea name="blurb" cols="50" rows="10"><?=HtmlSpecialChars($room_row[blurb])?></textarea></p>
+	<br /><p>Description:<br /><textarea name="blurb" cols="50" rows="10"><?=HtmlSpecialChars($room[blurb])?></textarea></p>
 
-<? if ($room_row[end_here]){ ?>
+<? if ($room[end_here]){ ?>
 
 	<p>(stort ends here)</p>
 
@@ -60,22 +90,22 @@
 
 <? }else{ ?>
 
-	<p>	choice 1:
-<? if ($room_row[room_1]){ ?>
-		(to <a href="edit.php?id=<?=$room_row[room_1]?>">room <?=$room_row[room_1]?></a>)
+	<p>	Choice 1:
+<? if ($room[room_1]){ ?>
+		(to <a href="edit.php?id=<?=$room[room_1]?>">room <?=$room[room_1]?></a>)
 <? }else{ ?>
 		(no story written)
 <? } ?>
-		<br /><input type="text" name="text_1" size="50" value="<?=HtmlSpecialChars($room_row[text_1])?>" />
+		<br /><input type="text" name="text_1" size="50" value="<?=HtmlSpecialChars($room[text_1])?>" />
 	</p>
 
-	<p>	choice 2:
-<? if ($room_row[room_2]){ ?>
-		(to <a href="edit.php?id=<?=$room_row[room_2]?>">room <?=$room_row[room_2]?></a>)
+	<p>	Choice 2:
+<? if ($room[room_2]){ ?>
+		(to <a href="edit.php?id=<?=$room[room_2]?>">room <?=$room[room_2]?></a>)
 <? }else{ ?>
 		(no story written)
 <? } ?>
-		<br /><input type="text" name="text_2" size="50" value="<?=HtmlSpecialChars($room_row[text_2])?>" />
+		<br /><input type="text" name="text_2" size="50" value="<?=HtmlSpecialChars($room[text_2])?>" />
 	</p>
 
 <? } ?>
@@ -84,6 +114,34 @@
 		<input type="submit" value="Save Changes" />
 	</p>
 </form>
+
+<?
+	if ($room[room_1] || $room[room_2]){
+?>
+
+<p>This room can't be deleted - it has children.</p>
+
+<?
+	}else{
+?>
+
+<form action="edit.php" method="post">
+<input type="hidden" name="id" value="<?=$room[id]?>" />
+<input type="hidden" name="delete" value="1" />
+
+	<p>
+		<br />
+		<br />
+		<br />
+		<br />
+		<input type="submit" value="Delete This Room" style="background-color: red; color: white; font-weight: bold;" />
+	</p>
+</form>
+
+<?
+	}
+?>
+
 
 <?
 	include('footer.txt');

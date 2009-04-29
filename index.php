@@ -1,8 +1,4 @@
 <?
-	include('../../../includes/network.txt');
-
-	mysql_select_db('cal_games');
-
 	include('header.txt');
 ?>
 

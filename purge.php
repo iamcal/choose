@@ -5,7 +5,18 @@
 
 
 	$ret = db_fetch("SELECT id FROM choose_rooms WHERE end_here=0 AND blurb='' AND room_1=0 AND room_2=0");
+	foreach ($ret[rows] as $row){
+		$ok = delete_room($row[id]);
+		echo $ok?'. ':'x '; flush();
+	}
 
+	$ret = db_fetch("SELECT id FROM choose_rooms WHERE end_here=0 AND text_1='' AND room_1=0 AND room_2=0");
+	foreach ($ret[rows] as $row){
+		$ok = delete_room($row[id]);
+		echo $ok?'. ':'x '; flush();
+	}
+
+	$ret = db_fetch("SELECT id FROM choose_rooms WHERE end_here=0 AND text_2='' AND room_1=0 AND room_2=0");
 	foreach ($ret[rows] as $row){
 		$ok = delete_room($row[id]);
 		echo $ok?'. ':'x '; flush();

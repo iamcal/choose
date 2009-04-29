@@ -1,0 +1,6 @@
+<Files edit.php>
+	AuthType basic
+	AuthName "iamcal choose app"
+	AuthUserFile /var/www/cal/iamcal.com/games/choose/.htpasswd
+	require valid-user
+</Files>

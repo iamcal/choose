@@ -152,6 +152,13 @@
 
 	echo "<!-- depth: $depth -->\n";
 
+	if ($room[id] == 1){
+		echo "<div class=\"warnbox\">\n";
+		echo "<b>Warning:</b> This game is not suitable for children. Some story choices contain language and situations that some adults may find offensive. ";
+		echo "This story is written by visitors to the site, and is largely unmoderated. Please do not use this in the classroom. ";
+		echo "</div>\n";
+	}
+
 	if ($room[end_here]){
 		print nl2br(htmlentities(chop($room[blurb])));
 		print "<br><br><b>It's all over.</b> Why not <a href=\"room.php\">start again</a>.";
@@ -165,7 +172,7 @@
 		echo "</div>\n";
 	}
 	print "<br><br><br><br>";
-	echo "Something wrong with this entry? Bad spelling/grammar? Too offensive? Then <a href=\"report.php?id=$room[id]\">report it</a>.<br />";
+	echo "Something wrong with this entry? Bad spelling/grammar? Empty? Makes no sense? Then <a href=\"report.php?id=$room[id]\">report it</a>.<br />";
 
 	if ($_SERVER[PHP_AUTH_USER]){
 		echo "<br />";

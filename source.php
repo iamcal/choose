@@ -12,6 +12,10 @@
 	SVN Repo: <a href="https://svn.iamcal.com/public/www/choose/">https://svn.iamcal.com/public/www/choose/</a><br />
 	<br />
 	<br />
-	It refers to an external database library. I haven't yet published that, so you're somewhat on your own there.
+	It refers to an external database library. I haven't yet published that, so you're somewhat on your own there.<br />
+	<br />
+	<br />
+	Some clever folks have <a href="http://github.com/teamcoltra/Choose-Your-Own-Adventure/">forked the code on github</a>,
+	including the db connection guts and an installer script. Take a look if you want to be up and running quickly.
 
 <?php include('footer.txt'); ?>
